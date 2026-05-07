@@ -348,88 +348,85 @@ Add:
 
 ```groovy
 pipeline {
-    agent any
-
-    tools {
+    agent any 
+    tools{
         maven 'maven'
     }
-
     environment {
-        SCANNER_HOME = tool 'sonar-scanner'
-        S3_BUCKET = "grambalti"
-        REGION = "ap-south-1"
-        warFile = "target/Insurance-0.0.1-SNAPSHOT.jar"
-        DOCKER_IMAGE = "rupesh121203/insureme"
-    }
-
+     SCANNER_HOME = tool 'sonar-scanner'
+     S3_BUCKET = "bucket-name"
+     REGION = "ap-south-1"
+     warFile = "target/Insurance-0.0.1-SNAPSHOT.jar"
+     DOCKER_IMAGE = "dockerhubusername/insureme"
+     }
     stages {
-
-        stage('code-pull') {
-            steps {
+        stage('code-pull'){
+            steps{
                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/mukundDeo9325/Project-InsureMe1.git']])
             }
         }
-
-        stage('code-build') {
-            steps {
+        stage('code-build'){
+            steps{
                 sh 'mvn clean package'
             }
         }
-
-        stage('code-test') {
+        
+        stage("code-test") {
             steps {
                 withSonarQubeEnv('sonar-server') {
                     sh '''
-                    $SCANNER_HOME/bin/sonar-scanner \
-                    -Dsonar.projectKey=InsureMe \
-                    -Dsonar.projectName=InsureMe \
-                    -Dsonar.sources=src \
-                    -Dsonar.java.binaries=target/classes
+                        $SCANNER_HOME/bin/sonar-scanner \
+                        -Dsonar.projectKey=InsureMe \
+                        -Dsonar.projectName=InsureMe \
+                        -Dsonar.sources=src \
+                        -Dsonar.java.binaries=target/classes
                     '''
                 }
             }
         }
 
-        stage('code-test-quality gate') {
+        stage("code-test-quality gate") {
             steps {
                 script {
                     waitForQualityGate abortPipeline: false, credentialsId: 'sonar-cred'
                 }
             }
         }
-
-        stage('code-push') {
-            steps {
+        stage('code-push'){
+            steps{
                 withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-cred', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                    sh 'aws s3 cp ${warFile} s3://${S3_BUCKET}/Artifacts/ --region ${REGION}'
-                }
+                   sh 'aws s3 cp ${warFile} s3://${S3_BUCKET}/Artifacts/ --region ${REGION}'
+                 }
             }
         }
-
-        stage('docker-image') {
+       stage('docker-image'){
+            steps{
+                sh 'docker build -t dockerhubusername/insureme .'
+                
+            }
+        }
+        
+        stage('image-push'){
             steps {
-                sh 'docker build -t ${DOCKER_IMAGE}:latest .'
+       	       withCredentials([usernamePassword(credentialsId: 'docker-red', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+            	sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+                sh 'docker push dockerhubusername/insureme'
+               }
             }
         }
-
-        stage('image-push') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-cred', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-                    sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-                    sh 'docker push ${DOCKER_IMAGE}:latest'
-                }
-            }
-        }
-
-        stage('Trivy Image Scan') {
+        
+         stage('Trivy Image Scan') {
             steps {
                 sh '''
-                trivy image --exit-code 0 --severity HIGH,CRITICAL ${DOCKER_IMAGE}:latest | tee trivy-report.txt
+                trivy image ${DOCKER_IMAGE}:latest > trivy-report.txt
                 '''
             }
         }
+        
     }
+    
 }
+        
 ```
 
 ---
