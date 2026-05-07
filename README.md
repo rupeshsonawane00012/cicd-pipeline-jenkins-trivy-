@@ -1,8 +1,6 @@
-# cicd-pipeline-jenkins-trivy-
+#  CI/CD Pipeline Project using Jenkins, SonarQube, Docker, Trivy & AWS
 
-# 🚀 DevSecOps CI/CD Pipeline Project using Jenkins, SonarQube, Docker, Trivy & AWS
-
-## 📌 Project Overview
+##  Project Overview
 
 This project demonstrates a complete DevSecOps CI/CD pipeline built using:
 
