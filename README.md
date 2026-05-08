@@ -354,10 +354,10 @@ pipeline {
     }
     environment {
      SCANNER_HOME = tool 'sonar-scanner'
-     S3_BUCKET = "bucket-name"
+     S3_BUCKET = "grambalti"
      REGION = "ap-south-1"
      warFile = "target/Insurance-0.0.1-SNAPSHOT.jar"
-     DOCKER_IMAGE = "dockerhubusername/insureme"
+     DOCKER_IMAGE = "rupesh121203/insureme"
      }
     stages {
         stage('code-pull'){
@@ -401,16 +401,16 @@ pipeline {
         }
        stage('docker-image'){
             steps{
-                sh 'docker build -t dockerhubusername/insureme .'
+                sh 'docker build -t rupesh121203/insureme .'
                 
             }
         }
         
         stage('image-push'){
             steps {
-       	       withCredentials([usernamePassword(credentialsId: 'docker-red', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+       	       withCredentials([usernamePassword(credentialsId: 'docker-cred', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
             	sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-                sh 'docker push dockerhubusername/insureme'
+                sh 'docker push rupesh121203/insureme'
                }
             }
         }
@@ -423,8 +423,12 @@ pipeline {
             }
         }
         
+ stage('code-deploy'){
+            steps{
+                sh 'docker run -itd --name insure-me -p 8089:8081 rupesh121203/insureme'
+            }
+        }
     }
-    
 }
         
 ```
