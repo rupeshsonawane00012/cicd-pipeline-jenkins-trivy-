@@ -112,19 +112,6 @@ The following inbound ports were enabled:
 
 ---
 
-# 📸 Screenshot Usage Guide
-
-Add screenshots for every major setup step using the following markdown format:
-
-```markdown
-![Screenshot Description](file-name.png)
-```
-
-Store all screenshots inside:
-
-```text
-```
-
 ---
 
 # 🖥️ Jenkins Installation
@@ -174,8 +161,6 @@ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 ---
 
 # 🐳 Docker Installation
-
-![Docker Installation](jenkins-plugin-installation.png)
 
 ```bash
 sudo apt install docker.io -y
