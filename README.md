@@ -239,7 +239,6 @@ After login, change the default password.
 
 # 📦 Install AWS CLI
 
-![AWS CLI Installation](create-s3-bucket.png)
 
 ```bash
 sudo snap install aws-cli --classic
@@ -369,7 +368,6 @@ grambalti
 
 # 🛡️ Install Trivy
 
-![Trivy Installation](jenkins-plugin-installation.png)
 
 ## Install Dependencies
 
@@ -427,8 +425,6 @@ Dashboard → New Item
 ---
 
 # 📄 Jenkins Pipeline (Jenkinsfile)
-
-![Pipeline Code](create-pipeline-job.png.png)
 
 ```groovy
 pipeline {
