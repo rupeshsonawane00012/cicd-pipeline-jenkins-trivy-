@@ -117,24 +117,23 @@ The following inbound ports were enabled:
 Add screenshots for every major setup step using the following markdown format:
 
 ```markdown
-![Screenshot Description](screenshots/file-name.png)
+![Screenshot Description](file-name.png)
 ```
 
 Store all screenshots inside:
 
 ```text
-screenshots/
 ```
 
 ---
 
 # 🖥️ Jenkins Installation
 
-![Jenkins Installation](screenshots/jenkins-installation-commands.png)
+![Jenkins Installation](jenkins-installation-commands.png)
 
 ## Install Java
 
-![Java Installation](screenshots/java-installation.png)
+![Java Installation](jenkins-installation-commands.png)
 
 ```bash
 sudo apt update
@@ -144,7 +143,7 @@ java -version
 
 ## Install Jenkins LTS
 
-![Jenkins LTS Installation](screenshots/jenkins-lts-installation.png)
+![Jenkins LTS Installation](jenkins-installation-commands.png)
 
 ```bash
 sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
@@ -160,7 +159,7 @@ sudo apt install jenkins
 
 ## Access Jenkins
 
-![Access Jenkins](screenshots/access-jenkins.png)
+![Access Jenkins](jenkins-browser-access.png)
 
 ```text
 http://<EC2-PUBLIC-IP>:8080
@@ -176,7 +175,7 @@ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 
 # 🐳 Docker Installation
 
-![Docker Installation](screenshots/docker-installation.png)
+![Docker Installation](jenkins-plugin-installation.png)
 
 ```bash
 sudo apt install docker.io -y
@@ -185,7 +184,7 @@ sudo systemctl start docker
 
 ## Give Jenkins Docker Access
 
-![Docker Permission for Jenkins](screenshots/docker-jenkins-access.png)
+![Docker Permission for Jenkins](jenkins-plugin-installation.png)
 
 ```bash
 sudo usermod -aG docker jenkins
@@ -212,7 +211,7 @@ docker ps
 
 # 🔍 SonarQube Setup
 
-![SonarQube Container](screenshots/sonarqube-container.png)
+![SonarQube Container](jenkins-sonarqube-system-config.png)
 
 ## Run SonarQube Container
 
@@ -222,7 +221,7 @@ docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
 
 ## Access SonarQube
 
-![Access SonarQube](screenshots/access-sonarqube.png)
+![Access SonarQube](jenkins-sonarqube-system-config.png)
 
 ```text
 http://<EC2-PUBLIC-IP>:9000
@@ -240,7 +239,7 @@ After login, change the default password.
 
 # 📦 Install AWS CLI
 
-![AWS CLI Installation](screenshots/aws-cli-installation.png)
+![AWS CLI Installation](create-s3-bucket.png)
 
 ```bash
 sudo snap install aws-cli --classic
@@ -250,7 +249,7 @@ sudo snap install aws-cli --classic
 
 # 🔐 Install Jenkins Plugins
 
-![Jenkins Plugins](screenshots/plugins-installation.png)
+![Jenkins Plugins](install-suggested-plugins.jpg)
 
 Installed the following plugins:
 
@@ -265,7 +264,7 @@ Installed the following plugins:
 
 # 🛠️ Configure Jenkins Tools
 
-![Jenkins Tools Configuration](screenshots/jenkins-tools.png)
+![Jenkins Tools Configuration](jenkins-maven-configuration.png)
 
 Navigate:
 
@@ -283,7 +282,7 @@ Configured:
 
 # 🔑 Configure Jenkins Credentials
 
-![Jenkins Credentials](screenshots/credentials-setup.png)
+![Jenkins Credentials](jenkins-all-credentials.png)
 
 Navigate:
 
@@ -318,7 +317,7 @@ Added:
 
 # 🔗 Configure SonarQube in Jenkins
 
-![SonarQube Jenkins Integration](screenshots/sonar-configuration.png)
+![SonarQube Jenkins Integration](jenkins-sonarqube-system-config.png)
 
 Navigate:
 
@@ -338,7 +337,7 @@ Dashboard → Manage Jenkins → System
 
 # 🔔 Configure SonarQube Webhook
 
-![SonarQube Webhook](screenshots/webhook-setup.png)
+![SonarQube Webhook](sonarqube-webhook-setup.png)
 
 Navigate:
 
@@ -356,7 +355,7 @@ http://<EC2-PUBLIC-IP>:8080/sonarqube-webhook/
 
 # ☁️ Create AWS S3 Bucket
 
-![AWS S3 Bucket](screenshots/s3-bucket.png)
+![AWS S3 Bucket](create-s3-bucket.png)
 
 An S3 bucket was created for storing build artifacts.
 
@@ -370,7 +369,7 @@ grambalti
 
 # 🛡️ Install Trivy
 
-![Trivy Installation](screenshots/trivy-installation.png)
+![Trivy Installation](jenkins-plugin-installation.png)
 
 ## Install Dependencies
 
@@ -410,7 +409,7 @@ trivy --version
 
 # 🔨 Create Jenkins Pipeline Job
 
-![Pipeline Job Creation](screenshots/pipeline-job.png)
+![Pipeline Job Creation](create-pipeline-job.png.png)
 
 Navigate:
 
@@ -429,7 +428,7 @@ Dashboard → New Item
 
 # 📄 Jenkins Pipeline (Jenkinsfile)
 
-![Pipeline Code](screenshots/pipeline-code.png)
+![Pipeline Code](create-pipeline-job.png.png)
 
 ```groovy
 pipeline {
@@ -527,7 +526,7 @@ pipeline {
 
 # 🚀 Build Pipeline
 
-![Successful Pipeline Execution](screenshots/successful-pipeline.png)
+![Successful Pipeline Execution](successful-pipeline-execution.png)
 
 Click:
 
@@ -548,7 +547,7 @@ The pipeline automatically:
 
 # 🌐 Access Deployed Application
 
-![Final Application Deployment](screenshots/deployed-application.png)
+![Final Application Deployment](final-application-deployment.png)
 
 ```text
 http://<EC2-PUBLIC-IP>:8089
@@ -578,10 +577,10 @@ The complete DevSecOps pipeline successfully implemented:
 
 # 📸 Screenshots
 
-Create a `screenshots/` folder and add:
+Create a `` folder and add:
 
 ```text
-screenshots/
+
 │
 ├── ec2-instance.png
 ├── jenkins-installation.png
