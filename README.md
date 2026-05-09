@@ -556,30 +556,6 @@ The complete DevSecOps pipeline successfully implemented:
 
 ---
 
-# 📸 Screenshots
-
-Create a `` folder and add:
-
-```text
-
-│
-├── ec2-instance.png
-├── jenkins-installation.png
-├── sonarqube-container.png
-├── docker-installation.png
-├── plugins-installation.png
-├── credentials-setup.png
-├── sonar-configuration.png
-├── webhook-setup.png
-├── s3-bucket.png
-├── trivy-installation.png
-├── pipeline-job.png
-├── successful-pipeline.png
-└── deployed-application.png
-```
-
----
-
 # 📚 Key Learnings
 
 This project helped in understanding:
