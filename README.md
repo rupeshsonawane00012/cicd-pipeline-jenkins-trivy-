@@ -1,117 +1,172 @@
-#  CI/CD Pipeline Project using Jenkins, SonarQube, Docker, Trivy & AWS
+# 🚀 Insure-Me DevSecOps CI/CD Pipeline Project
 
-##  Project Overview
+## 📌 Project Overview
 
-This project demonstrates a complete DevSecOps CI/CD pipeline built using:
+This project demonstrates a complete end-to-end DevSecOps CI/CD pipeline implementation using:
 
 * Jenkins
 * SonarQube
 * Docker
 * Trivy
 * AWS EC2
-* Amazon S3
+* AWS S3
+* DockerHub
 * Maven
 * GitHub
 
-The pipeline automatically:
+The pipeline automates:
 
-1. Pulls source code from GitHub
-2. Builds the Java Spring Boot application using Maven
-3. Runs unit tests
-4. Performs static code analysis using SonarQube
-5. Applies Quality Gate checks
-6. Uploads build artifacts to Amazon S3
-7. Builds Docker image
-8. Pushes image to DockerHub
-9. Performs vulnerability scanning using Trivy
+* Source Code Pull
+* Build Automation
+* Static Code Analysis
+* Quality Gate Validation
+* Artifact Storage
+* Docker Image Build
+* DockerHub Push
+* Vulnerability Scanning
+* Container Deployment
 
 ---
 
-# 🏗️ Architecture
+# 🏗️ Project Architecture
 
 ```text
-GitHub → Jenkins → Maven Build → SonarQube Analysis → Quality Gate
-       → S3 Upload → Docker Build → DockerHub Push → Trivy Scan
+GitHub Repository
+        ↓
+Jenkins Pipeline
+        ↓
+Maven Build
+        ↓
+SonarQube Analysis
+        ↓
+Quality Gate Validation
+        ↓
+AWS S3 Artifact Upload
+        ↓
+Docker Image Build
+        ↓
+DockerHub Push
+        ↓
+Trivy Vulnerability Scan
+        ↓
+Docker Container Deployment
+        ↓
+AWS EC2 Hosted Application
 ```
 
 ---
 
-# 🛠️ Technologies Used
+# ⚙️ Tech Stack
 
-| Tool             | Purpose                          |
-| ---------------- | -------------------------------- |
-| Jenkins          | CI/CD Automation                 |
-| SonarQube        | Code Quality & Security Analysis |
-| Docker           | Containerization                 |
-| Trivy            | Vulnerability Scanning           |
-| AWS EC2          | Hosting Jenkins & SonarQube      |
-| AWS S3           | Artifact Storage                 |
-| Maven            | Build Tool                       |
-| GitHub           | Source Code Management           |
-| Java Spring Boot | Application Framework            |
+| Tool      | Purpose                |
+| --------- | ---------------------- |
+| Jenkins   | CI/CD Automation       |
+| SonarQube | Static Code Analysis   |
+| Docker    | Containerization       |
+| Trivy     | Vulnerability Scanning |
+| AWS EC2   | Cloud Hosting          |
+| AWS S3    | Artifact Storage       |
+| DockerHub | Docker Image Registry  |
+| Maven     | Build Tool             |
+| GitHub    | Source Code Management |
 
 ---
 
-# ☁️ AWS Infrastructure Setup
+# ☁️ AWS EC2 Configuration
 
-## Step 1: Launch EC2 Instance
+A larger EC2 instance was selected to support Jenkins, SonarQube, Docker, and Trivy simultaneously.
 
-### Recommended Instance Type
+## Instance Configuration
 
-```text
-t3.medium
+| Configuration | Value          |
+| ------------- | -------------- |
+| Instance Type | m7i-flex.large |
+| vCPU          | 2              |
+| RAM           | 8 GB           |
+| Storage       | 20 GB          |
+| OS            | Ubuntu         |
+
+## Why Larger Instance Was Required?
+
+SonarQube and Jenkins consume significant memory.
+
+Using 8 GB RAM avoided:
+
+* Jenkins crashes
+* SonarQube container failures
+* Docker memory issues
+* Pipeline slowdowns
+
+---
+
+# 🔐 Security Group Configuration
+
+The following inbound ports were enabled:
+
+| Port | Purpose                |
+| ---- | ---------------------- |
+| 22   | SSH Access             |
+| 8080 | Jenkins                |
+| 9000 | SonarQube              |
+| 8089 | Application Deployment |
+
+---
+
+# 📸 Screenshot Usage Guide
+
+Add screenshots for every major setup step using the following markdown format:
+
+```markdown
+![Screenshot Description](screenshots/file-name.png)
 ```
 
-### Security Group Ports
+Store all screenshots inside:
 
-| Port | Purpose     |
-| ---- | ----------- |
-| 22   | SSH         |
-| 8080 | Jenkins     |
-| 9000 | SonarQube   |
-| 80   | Application |
+```text
+screenshots/
+```
 
 ---
 
-# 🔧 Jenkins Installation
+# 🖥️ Jenkins Installation
+
+![Jenkins Installation](screenshots/jenkins-installation.png)
 
 ## Install Java
 
+![Java Installation](screenshots/java-installation.png)
+
 ```bash
 sudo apt update
-sudo apt install openjdk-17-jdk -y
+sudo apt install fontconfig openjdk-21-jre
 java -version
 ```
 
-## Install Jenkins
+## Install Jenkins LTS
+
+![Jenkins LTS Installation](screenshots/jenkins-lts-installation.png)
 
 ```bash
-curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo tee \
-/usr/share/keyrings/jenkins-keyring.asc > /dev/null
+sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key
 
- echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
-https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
-/etc/apt/sources.list.d/jenkins.list > /dev/null
+echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
 
 sudo apt update
-sudo apt install jenkins -y
-```
-
-## Start Jenkins
-
-```bash
-sudo systemctl enable jenkins
-sudo systemctl start jenkins
-sudo systemctl status jenkins
+sudo apt install jenkins
 ```
 
 ## Access Jenkins
+
+![Access Jenkins](screenshots/access-jenkins.png)
 
 ```text
 http://<EC2-PUBLIC-IP>:8080
 ```
 
-## Get Jenkins Password
+## Get Jenkins Initial Password
 
 ```bash
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
@@ -121,18 +176,29 @@ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 
 # 🐳 Docker Installation
 
+![Docker Installation](screenshots/docker-installation.png)
+
 ```bash
 sudo apt install docker.io -y
 sudo systemctl start docker
-sudo systemctl enable docker
 ```
 
 ## Give Jenkins Docker Access
 
+![Docker Permission for Jenkins](screenshots/docker-jenkins-access.png)
+
 ```bash
 sudo usermod -aG docker jenkins
-sudo systemctl restart jenkins
+sudo usermod -aG docker ubuntu
+newgrp docker
+sudo chmod 777 /var/run/docker.sock
+```
+
+## Restart Services
+
+```bash
 sudo systemctl restart docker
+sudo systemctl restart jenkins
 ```
 
 ## Verify Docker
@@ -146,11 +212,7 @@ docker ps
 
 # 🔍 SonarQube Setup
 
-## Pull SonarQube Image
-
-```bash
-docker pull sonarqube:lts-community
-```
+![SonarQube Container](screenshots/sonarqube-container.png)
 
 ## Run SonarQube Container
 
@@ -158,13 +220,9 @@ docker pull sonarqube:lts-community
 docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
 ```
 
-## Verify Container
-
-```bash
-docker ps
-```
-
 ## Access SonarQube
+
+![Access SonarQube](screenshots/access-sonarqube.png)
 
 ```text
 http://<EC2-PUBLIC-IP>:9000
@@ -172,55 +230,103 @@ http://<EC2-PUBLIC-IP>:9000
 
 ## Default Credentials
 
-```text
-Username: admin
-Password: admin
+| Username | Password |
+| -------- | -------- |
+| admin    | admin    |
+
+After login, change the default password.
+
+---
+
+# 📦 Install AWS CLI
+
+![AWS CLI Installation](screenshots/aws-cli-installation.png)
+
+```bash
+sudo snap install aws-cli --classic
 ```
 
 ---
 
-# 🔐 SonarQube Token Setup
+# 🔐 Install Jenkins Plugins
 
-## Generate Token
+![Jenkins Plugins](screenshots/plugins-installation.png)
 
-Go to:
+Installed the following plugins:
 
-```text
-Administration → Security → Users → Tokens
-```
-
-Create token:
-
-```text
-jenkins-token
-```
-
-Copy the generated token.
-
----
-
-# ⚙️ Jenkins SonarQube Configuration
-
-## Install Plugins
-
-Install:
-
+* Stage View
+* Maven Integration
 * SonarQube Scanner
-* Pipeline
-* Docker Pipeline
 * AWS Credentials
+* S3 Publisher
+* Docker
 
 ---
 
-## Configure SonarQube Server
+# 🛠️ Configure Jenkins Tools
 
-Go to:
+![Jenkins Tools Configuration](screenshots/jenkins-tools.png)
+
+Navigate:
 
 ```text
-Manage Jenkins → System → SonarQube servers
+Dashboard → Manage Jenkins → Tools
 ```
 
-Add:
+Configured:
+
+* Maven
+* SonarQube Scanner
+* Docker
+
+---
+
+# 🔑 Configure Jenkins Credentials
+
+![Jenkins Credentials](screenshots/credentials-setup.png)
+
+Navigate:
+
+```text
+Dashboard → Manage Jenkins → Credentials
+```
+
+Added:
+
+## DockerHub Credentials
+
+| Field | Value                  |
+| ----- | ---------------------- |
+| Type  | Username with Password |
+| ID    | docker-cred            |
+
+## AWS Credentials
+
+| Field | Value           |
+| ----- | --------------- |
+| Type  | AWS Credentials |
+| ID    | aws-cred        |
+
+## SonarQube Token
+
+| Field | Value       |
+| ----- | ----------- |
+| Type  | Secret Text |
+| ID    | sonar-cred  |
+
+---
+
+# 🔗 Configure SonarQube in Jenkins
+
+![SonarQube Jenkins Integration](screenshots/sonar-configuration.png)
+
+Navigate:
+
+```text
+Dashboard → Manage Jenkins → System
+```
+
+## SonarQube Installation
 
 | Field | Value                       |
 | ----- | --------------------------- |
@@ -230,77 +336,31 @@ Add:
 
 ---
 
-## Add Sonar Token in Jenkins
+# 🔔 Configure SonarQube Webhook
 
-Go to:
+![SonarQube Webhook](screenshots/webhook-setup.png)
+
+Navigate:
 
 ```text
-Manage Jenkins → Credentials
+SonarQube → Administration → Configuration → Webhooks
 ```
 
-Add:
-
-| Field  | Value           |
-| ------ | --------------- |
-| Kind   | Secret text     |
-| ID     | sonar-cred      |
-| Secret | SonarQube Token |
-
----
-
-# 🔎 Install Sonar Scanner
-
-Go to:
+## Webhook URL
 
 ```text
-Manage Jenkins → Tools
-```
-
-Add:
-
-```text
-Name: sonar-scanner
-```
-
-Enable:
-
-```text
-Install Automatically
+http://<EC2-PUBLIC-IP>:8080/sonarqube-webhook/
 ```
 
 ---
 
-# 🛡️ Trivy Installation
+# ☁️ Create AWS S3 Bucket
 
-## Install Trivy
+![AWS S3 Bucket](screenshots/s3-bucket.png)
 
-```bash
-sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+An S3 bucket was created for storing build artifacts.
 
-wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | \
-gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
-
-echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] \
-https://aquasecurity.github.io/trivy-repo/deb generic main" | \
-sudo tee -a /etc/apt/sources.list.d/trivy.list
-
-sudo apt-get update
-sudo apt-get install trivy -y
-```
-
-## Verify Trivy
-
-```bash
-trivy --version
-```
-
----
-
-# ☁️ AWS S3 Setup
-
-## Create S3 Bucket
-
-Example:
+## Example Bucket
 
 ```text
 grambalti
@@ -308,69 +368,99 @@ grambalti
 
 ---
 
-## Add AWS Credentials in Jenkins
+# 🛡️ Install Trivy
 
-Go to:
+![Trivy Installation](screenshots/trivy-installation.png)
 
-```text
-Manage Jenkins → Credentials
+## Install Dependencies
+
+```bash
+sudo apt-get install wget apt-transport-https gnupg lsb-release -y
 ```
 
-Add:
+## Add Trivy GPG Key
 
-| Field | Value           |
-| ----- | --------------- |
-| Kind  | AWS Credentials |
-| ID    | aws-cred        |
+```bash
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | \
+gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+```
+
+## Add Repository
+
+```bash
+echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] \
+https://aquasecurity.github.io/trivy-repo/deb generic main" | \
+sudo tee -a /etc/apt/sources.list.d/trivy.list
+```
+
+## Install Trivy
+
+```bash
+sudo apt-get update
+sudo apt-get install trivy -y
+```
+
+## Verify Installation
+
+```bash
+trivy --version
+```
 
 ---
 
-# 🐳 DockerHub Setup
+# 🔨 Create Jenkins Pipeline Job
 
-## Create DockerHub Credentials
+![Pipeline Job Creation](screenshots/pipeline-job.png)
 
-Go to:
+Navigate:
 
 ```text
-Manage Jenkins → Credentials
+Dashboard → New Item
 ```
 
-Add:
+## Configure Pipeline
 
-| Field | Value                  |
-| ----- | ---------------------- |
-| Kind  | Username with password |
-| ID    | docker-cred            |
+| Field    | Value    |
+| -------- | -------- |
+| Job Name | job1     |
+| Type     | Pipeline |
 
 ---
 
-# 📄 Jenkinsfile
+# 📄 Jenkins Pipeline (Jenkinsfile)
+
+![Pipeline Code](screenshots/pipeline-code.png)
 
 ```groovy
 pipeline {
-    agent any 
-    tools{
+    agent any
+
+    tools {
         maven 'maven'
     }
+
     environment {
-     SCANNER_HOME = tool 'sonar-scanner'
-     S3_BUCKET = "grambalti"
-     REGION = "ap-south-1"
-     warFile = "target/Insurance-0.0.1-SNAPSHOT.jar"
-     DOCKER_IMAGE = "rupesh121203/insureme"
-     }
+        SCANNER_HOME = tool 'sonar-scanner'
+        S3_BUCKET = "bucket-name"
+        REGION = "ap-south-1"
+        warFile = "target/Insurance-0.0.1-SNAPSHOT.jar"
+        DOCKER_IMAGE = "dockerhubusername/insureme"
+    }
+
     stages {
-        stage('code-pull'){
-            steps{
+
+        stage('code-pull') {
+            steps {
                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/mukundDeo9325/Project-InsureMe1.git']])
             }
         }
-        stage('code-build'){
-            steps{
+
+        stage('code-build') {
+            steps {
                 sh 'mvn clean package'
             }
         }
-        
+
         stage("code-test") {
             steps {
                 withSonarQubeEnv('sonar-server') {
@@ -392,128 +482,150 @@ pipeline {
                 }
             }
         }
-        stage('code-push'){
-            steps{
-                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-cred', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                   sh 'aws s3 cp ${warFile} s3://${S3_BUCKET}/Artifacts/ --region ${REGION}'
-                 }
-            }
-        }
-       stage('docker-image'){
-            steps{
-                sh 'docker build -t rupesh121203/insureme .'
-                
-            }
-        }
-        
-        stage('image-push'){
+
+        stage('code-push') {
             steps {
-       	       withCredentials([usernamePassword(credentialsId: 'docker-cred', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-            	sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-                sh 'docker push rupesh121203/insureme'
-               }
+                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-cred', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    sh 'aws s3 cp ${warFile} s3://${S3_BUCKET}/Artifacts/ --region ${REGION}'
+                }
             }
         }
-        
-         stage('Trivy Image Scan') {
+
+        stage('docker-image') {
+            steps {
+                sh 'docker build -t dockerhubusername/insureme .'
+            }
+        }
+
+        stage('image-push') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-cred', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+                    sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+                    sh 'docker push dockerhubusername/insureme'
+                }
+            }
+        }
+
+        stage('Trivy Image Scan') {
             steps {
                 sh '''
                 trivy image ${DOCKER_IMAGE}:latest > trivy-report.txt
                 '''
             }
         }
-        
- stage('code-deploy'){
-            steps{
-                sh 'docker run -itd --name insure-me -p 8089:8081 rupesh121203/insureme'
+
+        stage('code-deploy') {
+            steps {
+                sh 'docker run -itd --name insure-me -p 8089:8081 dockerhubusername/insureme'
             }
         }
     }
 }
-        
 ```
 
 ---
 
-# 📊 Trivy Report
+# 🚀 Build Pipeline
 
-## View Trivy Report on EC2
+![Successful Pipeline Execution](screenshots/successful-pipeline.png)
 
-```bash
-cd /var/lib/jenkins/workspace/job1
-cat trivy-report.txt
+Click:
+
+```text
+Build Now
+```
+
+The pipeline automatically:
+
+* builds the project
+* scans the code
+* pushes artifacts
+* builds Docker image
+* scans vulnerabilities
+* deploys application
+
+---
+
+# 🌐 Access Deployed Application
+
+![Final Application Deployment](screenshots/deployed-application.png)
+
+```text
+http://<EC2-PUBLIC-IP>:8089
+```
+
+Example:
+
+```text
+http://13.200.5.25:8089
 ```
 
 ---
 
-# 🧠 Problems Faced During Setup
+# ✅ Final Pipeline Result
 
-## Issues Solved
+The complete DevSecOps pipeline successfully implemented:
 
-* SonarQube URL missing http://
-* SonarQube server name mismatch
-* Docker permission denied
-* SonarQube container stopped
-* Public IP changed after EC2 restart
-* Trivy image tag mismatch
-* Quality Gate waiting issue
-* Docker daemon access issue
-
----
-
-# 📈 Final Outcome
-
-✅ CI/CD Pipeline Successfully Built
-
-✅ SonarQube Security Scanning
-
-✅ Docker Image Build & Push
-
-✅ Trivy Vulnerability Scan
-
-✅ AWS S3 Artifact Upload
-
-✅ End-to-End DevSecOps Workflow
+* Continuous Integration
+* Continuous Deployment
+* Static Code Analysis
+* Security Scanning
+* Artifact Management
+* Docker Containerization
+* Cloud Deployment
 
 ---
 
-# 📸 Recommended Screenshots for GitHub
+# 📸 Screenshots
 
-Add screenshots for:
+Create a `screenshots/` folder and add:
 
-1. Jenkins Pipeline Success
-2. SonarQube Dashboard
-3. DockerHub Image
-4. Trivy Scan Report
-5. AWS EC2 Dashboard
-6. S3 Bucket Artifact
+```text
+screenshots/
+│
+├── ec2-instance.png
+├── jenkins-installation.png
+├── sonarqube-container.png
+├── docker-installation.png
+├── plugins-installation.png
+├── credentials-setup.png
+├── sonar-configuration.png
+├── webhook-setup.png
+├── s3-bucket.png
+├── trivy-installation.png
+├── pipeline-job.png
+├── successful-pipeline.png
+└── deployed-application.png
+```
 
 ---
 
-# 🚀 Future Improvements
+# 📚 Key Learnings
 
-* Kubernetes Deployment
-* Terraform Infrastructure
-* Nginx Reverse Proxy
-* HTTPS Setup
-* Email Notifications
-* Slack Integration
-* Monitoring using Prometheus & Grafana
-* Blue-Green Deployment
-* GitHub Webhooks
+This project helped in understanding:
+
+* CI/CD automation
+* DevSecOps practices
+* Jenkins pipelines
+* Docker containerization
+* SonarQube analysis
+* Trivy vulnerability scanning
+* AWS cloud deployment
+* Artifact management
+* Pipeline troubleshooting
 
 ---
 
 # 👨‍💻 Author
 
-## Rupesh Sonawane
+## Rupesh Gorakhnath Sonawane
 
-Aspiring DevOps & Cloud Engineer passionate about:
+B.Tech Computer Science Engineering
 
-* DevOps
-* Cloud Computing
-* CI/CD Automation
-* Security Scanning
-* Infrastructure Automation
+DevOps | Cloud | CI/CD | AWS | Docker | Jenkins | DevSecOps
 
 ---
+
+# ⭐ Conclusion
+
+This project demonstrates a production-style DevSecOps CI/CD pipeline integrating automation, security scanning, containerization, and cloud deployment using modern DevOps tools and AWS infrastructure.
