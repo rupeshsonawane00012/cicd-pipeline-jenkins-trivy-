@@ -130,7 +130,7 @@ screenshots/
 
 # 🖥️ Jenkins Installation
 
-![Jenkins Installation](screenshots/jenkins-installation.png)
+![Jenkins Installation](screenshots/jenkins-installation-commands.png)
 
 ## Install Java
 
